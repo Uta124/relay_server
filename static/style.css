@@ -1,0 +1,94 @@
+
+.line__container {
+  padding:0;
+  background: #7494c0;
+  overflow: hidden;
+  width : 100%;
+  margin: px auto;
+  font-size: 80%;
+}
+
+/* タイトル部分 */
+.line__title {
+  background: #273246;
+  padding: 10px;
+  text-align: center;
+  font-size: 150%;
+  color: #ffffff;
+  width:100%;
+  top : 0px;
+  position: fixed;
+  z-index : 1;
+}
+
+/* 会話部分 */
+/*.line__container .line__contents {
+  padding: 10px;
+  overflow: hidden;
+  line-height: 135%;
+}*/
+
+.line__container .scroll {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+
+
+#msg{
+  position: fixed;
+  top: 90%;
+  right: 120px;
+  z-index : 1;
+}
+#button1{
+  position: fixed;
+  top: 90%;
+  right: 50px;
+  z-index : 1;
+}
+#file-input{
+  position: fixed;
+  top: 95%;
+  right: 130px;
+  z-index : 1;
+}
+#button2{
+  position: fixed;
+  top: 95%;
+  right: 50px;
+  z-index : 1;
+}
+
+
+.chat-container{
+  margin: 30px 0;
+  display:block;
+  justify-content: flex-start;
+  align-items: flex-start; /*縦位置を上揃え*/
+/*align-items: center; */ /*縦位置を真ん中揃え*/
+}
+
+
+.chat-text p{
+  margin:8px 0 0 !important;
+}
+.chat-text p:first-child{
+  margin-top:0 !important;
+}
+
+.chat-text p { /* 左ふきだしの本体 */
+	display:inline-block;
+	position:relative;
+	background-color:#99dddd;
+	border-radius:10px;
+	padding:10px;
+	margin:0 0 0 10px;
+  margin:20 !important;
+}
+
+.chat-image{
+  object-fit: cover;
+  max-width:20%;
+  margin:20 !important;
+}

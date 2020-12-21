@@ -1,6 +1,7 @@
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
+import os
 
 cl = []
 
@@ -12,15 +13,16 @@ class MainHandler(tornado.web.RequestHandler):
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
-        print("open is called")        
+        print("open is called")
         if self not in cl:
             cl.append(self)
- 
+
     def on_message(self, message):
         print("on message")
         for client in cl:
             client.write_message(message)
- 
+            #print(message)
+
     def on_close(self):
         print("on close")
         if self in cl:
@@ -29,8 +31,11 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
 application = tornado.web.Application([
     (r"/", MainHandler),
-    (r"/websocket", WebSocketHandler),    
-])
+    (r"/websocket", WebSocketHandler),
+    ],
+    static_path=os.path.join(os.getcwd(),  "static"),
+)
+
 if __name__ == "__main__":
     print("main")
     application.listen(8080)

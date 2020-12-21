@@ -1,36 +1,116 @@
 <html>
+
 <head>
+  <meta charset="UTF-8"/>
+  <title>Chat</title>
+  <link rel='stylesheet' href="{{static_url("style.css")}}" type='text/css' media='all'/>
+  <div class="line__title">
+      Chat
+  </div>
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
   <script>
-    var ws;
-    $(function(){
-      // RaspberryPiへ10005番ポートで接続
-      //var ws = new WebSocket("ws://raspberrypi.local:10005/");
-      //var ws = new WebSocket("ws://localhost:10005/");
+  var ws;
+    $(function () {
       ws = new WebSocket("ws://localhost:8080/websocket");
       // サーバーからのメッセージ受信時のイベント
-      ws.onmessage = function(message){
-        $('textarea').val($('textarea').val() + message.data + '\n')
+      ws.onmessage = function (message) {
+        if (isBase64(message.data)) {
+          appendImage(message.data);
+          $('#target').animate({scrollTop: $('#target')[0].scrollHeight}, 'fast');
+        } else {
+          appendText(message.data);
+          $('#target').animate({scrollTop: $('#target')[0].scrollHeight}, 'fast');
+          // $("textarea").val($("textarea").val() + message.data + "\n")
+        }
       }
-      /*
-      setTimeout(function(){
-        // サーバーへメッセージ送信
-        ws.send('from html');
-      }, 6000)
-      */
     })
+    $(function() {
+      var height=$(".line__title").height();
+      $("body").css("margin-top", 55);//10pxだけ余裕をもたせる
+    });
 
     function f() {
-      var input_message = document.getElementById("msg").value;      
-      //alert(input_message)
-      ws.send(input_message)
+      var input_message = document.getElementById("msg").value;
+      ws.send(input_message);
+    }
 
+    const sendFile = () => {
+      const fileInput = document.getElementById("file-input");
+      const file = fileInput.files[0];
+
+      const reader = new FileReader();
+
+      reader.addEventListener("load", () => {
+        const fileData = reader.result.replace(/^data:\w+\/\w+;base64,/, "")
+        ws.send(fileData);
+      }, false);
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+
+    const appendText = (text) => {
+      var p = document.createElement('p');
+      p.textContent = text;
+      const textElm = document.createElement("div");
+      textElm.className = 'chat-text';
+      textElm.appendChild(p);
+      document.getElementById("chat-container").appendChild(textElm);
+    }
+
+    const appendImage = (base64Data) => {
+      var img = new Image();
+      const div = document.createElement('div');
+      img.onload = () => {
+
+        document.getElementById("chat-container").appendChild(div).appendChild(img);
+      };
+      const imageDataUrl = cvtBase64ToImgDataUrl(base64Data);
+      img.src = imageDataUrl;
+      img.classList.add("chat-image");
+
+
+    }
+
+    const cvtBase64ToImgDataUrl = (base64Data) => {
+      return "data:image;base64," + base64Data;
+    }
+
+    const isBase64 = (str) => {
+      if (typeof str !== "string" || str === "" || str.trim() === "") return false;
+      try {
+        return btoa(atob(str)) == str;
+      } catch (err) {
+        return false;
+      }
     }
   </script>
 </head>
+
+
+
 <body>
-  <textarea style="width:400px;height:100px"></textarea>
-  <input type="text" id="msg"/>
-  <button type="button" onclick="f()">hoge</buttono>
+  <div class="line__container">
+
+    <div class="line__contents scroll" id="target">
+      <input type="text" id="msg">
+      <button id="button1" type="button" onclick="f()">send</button>
+
+
+      <input id="file-input" type="file">
+      <button id="button2" type="button" onclick="sendFile()">send file</button>
+
+
+      <div id="chat-container" class="chat-container"></div>
+
+
+
+
+    </div>
+  </div>
+
 </body>
+
 </html>
